@@ -17,6 +17,7 @@ button{padding:10px 20px;margin:5px;font-size:16px;background:#007bff;color:whit
 <button onclick="comp()">Complement</button>
 <button onclick="revcomp()">Reverse Complement</button>
 <button onclick="translateDNA()">DNA to Protein</button>
+  <button onclick="copyResult()">Copy Result</button>
 <div id="out">Result yahan aayega...</div>
 <script>
 function check(){
@@ -47,6 +48,10 @@ if(t[c]=='*') break;
 protein+=t[c]||'';
 }
 document.getElementById('out').innerHTML="<b>Protein:</b> "+protein;
+}
+  function copyResult(){
+  let t = document.getElementById('out').innerText;
+  navigator.clipboard.writeText(t).then(function(){ alert('Copy ho gaya!'); });
 }
 </script>
 </body>
