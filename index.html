@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>DNA Tool</title>
+<style>
+body{font-family:Arial;text-align:center;padding:20px;background:#f0f8ff}
+textarea{width:90%;height:100px;font-size:18px}
+button{padding:10px 20px;margin:5px;font-size:16px;background:#007bff;color:white;border:none;border-radius:8px}
+#out{background:white;padding:15px;margin-top:15px;border-radius:10px;text-align:left}
+</style>
+</head>
+<body>
+<h1>🧬 DNA Tool</h1>
+<p>Apna DNA Sequence Yahan Likhen (A,T,G,C)</p>
+<textarea id="dna" placeholder="Example: ATGCGTACGTAG"></textarea><br>
+<button onclick="check()">Analyze</button>
+<button onclick="comp()">Complement</button>
+<button onclick="revcomp()">Reverse Complement</button>
+<div id="out">Result yahan aayega...</div>
+<script>
+function check(){
+let s=document.getElementById('dna').value.toUpperCase().replace(/[^ATGC]/g,'');
+let gc=((s.match(/[GC]/g)||[]).length/s.length*100||0).toFixed(2);
+let rna=s.replace(/T/g,'U');
+document.getElementById('out').innerHTML="<b>Length:</b> "+s.length+"<br><b>GC %:</b> "+gc+"%<br><b>RNA:</b> "+rna;
+}
+function comp(){
+let s=document.getElementById('dna').value.toUpperCase();
+let m={A:'T',T:'A',G:'C',C:'G'};
+let r='';for(let c of s){r+=m[c]||c}
+document.getElementById('out').innerHTML="<b>Complement:</b><br>"+r;
+}
+function revcomp(){
+let s=document.getElementById('dna').value.toUpperCase();
+let m={A:'T',T:'A',G:'C',C:'G'};
+let r='';for(let c of s){r+=m[c]||c}
+document.getElementById('out').innerHTML="<b>Reverse Complement:</b><br>"+r.split('').reverse().join('');
+}
+</script>
+</body>
+</html>
