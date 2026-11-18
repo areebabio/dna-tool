@@ -3,82 +3,63 @@
 <head>
 <title>DNA Tool</title>
 <style>
-body{font-family:Arial;text-align:center;padding:20px;background:#f0f8ff}
-textarea{width:90%;height:100px;font-size:18px}
-button{padding:10px 20px;margin:5px;font-size:16px;background:#007bff;color:white;border:none;border-radius:8px}
-#out{background:white;padding:15px;margin-top:15px;border-radius:10px;text-align:left}
+body{font-family:Arial;text-align:center;padding:20px}
+textarea{width:90%;height:100px}
+button{padding:10px;margin:5px}
+#out{border:1px solid #ccc;padding:15px;margin-top:10px;text-align:left;word-break:break-all}
 </style>
 </head>
 <body>
-<h1>🧬 DNA Tool</h1>
-<p>Apna DNA Sequence Yahan Likhen (A,T,G,C)</p>
-<textarea id="dna" placeholder="Example: ATGCGTACGTAG"></textarea><br>
-<button onclick="check()">Analyze</button>
-<button onclick="comp()">Complement</button>
-<button onclick="revcomp()">Reverse Complement</button>
-<button onclick="translateDNA()">DNA to Protein</button>
-  <button onclick="copyResult()">Copy Result</button>
-  <button onclick="findORF()">Find ORF</button>
+<h2>DNA Tool 🧬</h2>
+<textarea id="dna" placeholder="DNA yahan likho... e.g. ATGAAATTTTAA"></textarea><br>
+<button onclick="analyze()">Analyze</button>
+<button onclick="complement()">Complement</button>
+<button onclick="revComp()">Reverse Complement</button>
+<button onclick="toProtein()">DNA to Protein</button>
+<button onclick="findORF()">Find ORF</button>
+<button onclick="copyResult()">Copy Result</button>
 <div id="out">Result yahan aayega...</div>
 <script>
-function check(){
-let s=document.getElementById('dna').value.toUpperCase().replace(/[^ATGC]/g,'');
-let gc=((s.match(/[GC]/g)||[]).length/s.length*100||0).toFixed(2);
-let rna=s.replace(/T/g,'U');
-document.getElementById('out').innerHTML="<b>Length:</b> "+s.length+"<br><b>GC %:</b> "+gc+"%<br><b>RNA:</b> "+rna;
+let table = {'TTT':'F','TTC':'F','TTA':'L','TTG':'L','CTT':'L','CTC':'L','CTA':'L','CTG':'L','ATT':'I','ATC':'I','ATA':'I','ATG':'M','GTT':'V','GTC':'V','GTA':'V','GTG':'V','TCT':'S','TCC':'S','TCA':'S','TCG':'S','CCT':'P','CCC':'P','CCA':'P','CCG':'P','ACT':'T','ACC':'T','ACA':'T','ACG':'T','GCT':'A','GCC':'A','GCA':'A','GCG':'A','TAT':'Y','TAC':'Y','TAA':'*','TAG':'*','CAT':'H','CAC':'H','CAA':'Q','CAG':'Q','AAT':'N','AAC':'N','AAA':'K','AAG':'K','GAT':'D','GAC':'D','GAA':'E','GAG':'E','TGT':'C','TGC':'C','TGA':'*','TGG':'W','CGT':'R','CGC':'R','CGA':'R','CGG':'R','AGT':'S','AGC':'S','AGA':'R','AGG':'R','GGT':'G','GGC':'G','GGA':'G','GGG':'G'};
+function getDNA(){ return document.getElementById('dna').value.toUpperCase().replace(/[^ATGC]/g,''); }
+function analyze(){
+  let dna = getDNA();
+  let a=(dna.match(/A/g)||[]).length, t=(dna.match(/T/g)||[]).length, g=(dna.match(/G/g)||[]).length, c=(dna.match(/C/g)||[]).length;
+  document.getElementById('out').innerHTML = '<b>Length:</b> '+dna.length+'<br><b>A:</b> '+a+' <b>T:</b> '+t+' <b>G:</b> '+g+' <b>C:</b> '+c+'<br><b>GC%:</b> '+(dna.length?(((g+c)/dna.length*100).toFixed(1)):'0');
 }
-function comp(){
-let s=document.getElementById('dna').value.toUpperCase();
-let m={A:'T',T:'A',G:'C',C:'G'};
-let r='';for(let c of s){r+=m[c]||c}
-document.getElementById('out').innerHTML="<b>Complement:</b><br>"+r;
+function complement(){
+  let dna = getDNA(); let comp='';
+  for(let ch of dna){ if(ch==='A') comp+='T'; else if(ch==='T') comp+='A'; else if(ch==='G') comp+='C'; else if(ch==='C') comp+='G'; }
+  document.getElementById('out').innerHTML = '<b>Complement:</b><br>'+comp;
 }
-function revcomp(){
-let s=document.getElementById('dna').value.toUpperCase();
-let m={A:'T',T:'A',G:'C',C:'G'};
-let r='';for(let c of s){r+=m[c]||c}
-document.getElementById('out').innerHTML="<b>Reverse Complement:</b><br>"+r.split('').reverse().join('');
+function revComp(){
+  let dna = getDNA(); let comp='';
+  for(let ch of dna){ if(ch==='A') comp+='T'; else if(ch==='T') comp+='A'; else if(ch==='G') comp+='C'; else if(ch==='C') comp+='G'; }
+  document.getElementById('out').innerHTML = '<b>Reverse Complement:</b><br>'+comp.split('').reverse().join('');
 }
-function translateDNA(){
-let dna=document.getElementById('dna').value.toUpperCase().replace(/[^ATGC]/g,'');
-let t={TTT:'F',TTC:'F',TTA:'L',TTG:'L',CTT:'L',CTC:'L',CTA:'L',CTG:'L',ATT:'I',ATC:'I',ATA:'I',ATG:'M',GTT:'V',GTC:'V',GTA:'V',GTG:'V',TCT:'S',TCC:'S',TCA:'S',TCG:'S',CCT:'P',CCC:'P',CCA:'P',CCG:'P',ACT:'T',ACC:'T',ACA:'T',ACG:'T',GCT:'A',GCC:'A',GCA:'A',GCG:'A',TAT:'Y',TAC:'Y',TAA:'*',TAG:'*',CAT:'H',CAC:'H',CAA:'Q',CAG:'Q',AAT:'N',AAC:'N',AAA:'K',AAG:'K',GAT:'D',GAC:'D',GAA:'E',GAG:'E',TGT:'C',TGC:'C',TGA:'*',TGG:'W',CGT:'R',CGC:'R',CGA:'R',CGG:'R',AGT:'S',AGC:'S',AGA:'R',AGG:'R',GGT:'G',GGC:'G',GGA:'G',GGG:'G'};
-let protein='';
-for(let i=0;i+2<dna.length;i+=3){
-let c=dna.substr(i,3);
-if(t[c]=='*') break;
-protein+=t[c]||'';
+function translateDNA(dna){
+  let p='';
+  for(let i=0;i<dna.length;i+=3){ let cod=dna.substring(i,i+3); if(table[cod]==='*') break; p+=table[cod]||''; }
+  return p;
 }
-document.getElementById('out').innerHTML="<b>Protein:</b> "+protein;
-}
-  function copyResult(){
-  let t = document.getElementById('out').innerText;
-  navigator.clipboard.writeText(t).then(function(){ alert('Copy ho gaya!'); });
+function toProtein(){
+  let dna = getDNA();
+  document.getElementById('out').innerHTML = '<b>Protein:</b><br>'+translateDNA(dna);
 }
 function findORF(){
-  let dna = document.getElementById('dna').value.toUpperCase().replace(/[^ATGC]/g,'');
+  let dna = getDNA();
   let start = dna.indexOf('ATG');
-  if(start === -1){ document.getElementById('out').innerHTML = '<b>ORF nahi mila!</b><br>ATG start codon nahi hai.'; return; }
-  let stops = ['TAA','TAG','TGA'];
-  let end = -1;
-  for(let i = start; i < dna.length; i += 3){
-    let codon = dna.substring(i, i+3);
-    if(stops.includes(codon)){ end = i; break; }
-  }
-  if(end === -1){ document.getElementById('out').innerHTML = '<b>ORF nahi mila!</b><br>Stop codon nahi hai.'; return; }
-  let orfDna = dna.substring(start, end+3);
-  let table = {'TTT':'F','TTC':'F','TTA':'L','TTG':'L','ATG':'M','AAA':'K','AAG':'K','TAA':'*','TAG':'*','TGA':'*','GCT':'A','GCC':'A','GCA':'A','GCG':'A','TCT':'S','TCC':'S','TCA':'S','TCG':'S','CCT':'P','CCC':'P','CCA':'P','CCG':'P','ACT':'T','ACC':'T','ACA':'T','ACG':'T','GTT':'V','GTC':'V','GTA':'V','GTG':'V','CAT':'H','CAC':'H','CAA':'Q','CAG':'Q','AAT':'N','AAC':'N','GAT':'D','GAC':'D','GAA':'E','GAG':'E','TGT':'C','TGC':'C','TGG':'W','CGT':'R','CGC':'R','CGA':'R','CGG':'R','AGT':'S','AGC':'S','AGA':'R','AGG':'R','GGT':'G','GGC':'G','GGA':'G','GGG':'G'};
-  let protein = '';
-  for(let i = 0; i < orfDna.length; i += 3){
-    let c = orfDna.substring(i, i+3);
-    if(table[c] === '*') break;
-    protein += table[c] || '';
-  }
-  document.getElementById('out').innerHTML = '<b>ORF Mil Gaya!</b><br><b>Position:</b> ' + (start+1) + ' se ' + (end+3) + ' tak<br><b>ORF DNA:</b> ' + orfDna + '<br><b>Protein:</b> ' + protein;
+  if(start===-1){ document.getElementById('out').innerHTML = '<b>ORF nahi mila!</b><br>ATG start codon nahi hai.'; return; }
+  let stops = ['TAA','TAG','TGA']; let end=-1;
+  for(let i=start;i<dna.length;i+=3){ let codon=dna.substring(i,i+3); if(stops.includes(codon)){ end=i; break; } }
+  if(end===-1){ document.getElementById('out').innerHTML = '<b>ORF nahi mila!</b><br>Stop codon nahi hai.'; return; }
+  let orfDna = dna.substring(start,end+3);
+  let protein = translateDNA(orfDna);
+  document.getElementById('out').innerHTML = '<b>ORF Mil Gaya!</b><br><b>Position:</b> '+(start+1)+' se '+(end+3)+' tak<br><b>ORF DNA:</b> '+orfDna+'<br><b>Protein:</b> '+protein;
 }
-  if(end === -1){ document.getElementById('out').innerHTML = '<b>ORF nahi mila!</b><br>Stop codon nahi hai.'; return; }
-  let orfDna = dna.substring(start, end+3);
-  let table = {'TTT':'F','TTC':'F','TTA':'L','TTG':'L','ATG':'M','AAA':'K','AAG':'K','TAA':'*','TAG':'*','TGA':'*','GCT':'A','GCC':'A','GCA':'A','GCG':'A','TCT':'S','TCC':'S','TCA':'S','TCG':'S','CCT':'P','CCC':'P','CCA':'P','CCG':'P','ACT':'T','ACC':'T','ACA':'T','ACG':'T','GTT':'V','GTC':'V','GTA':'V','GTG':'V','CAT':'H','CAC':'H','CAA':'Q','CAG':'Q','AAT':'N','AAC':'N','GAT':'D','GAC':'D','GAA':'E','GAG':'E','TGT':'C','TGC':'C','TGG':'W','CGT':'R','CGC':'R','CGA':'R','CGG':'R','AGT':'S','AGC':'S','AGA':'R','AGG':'R','GGT':'G','GGC':'G','GGA':'G','GGG':'G'}; let protein = ''; for(let i=0;i<orfDna.length;i+=3){ let c=orfDna.substring(i,i+3); if(table[c]==='*') break; protein += table[c] || ''; }
-  document.getElementById('out').innerHTML = '<b>ORF Mil Gaya!</b><br><b>Position:</b> ' + (start+1) + ' se ' + (end+3) + ' tak<br><b>ORF DNA:</b> ' + orfDna + '<br><b>Protein:</b> ' + protein;
+function copyResult(){
+  let t=document.getElementById('out').innerText;
+  navigator.clipboard.writeText(t); alert('Copy ho gaya!');
 }
 </script>
 </body>
