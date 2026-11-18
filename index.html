@@ -18,6 +18,7 @@ button{padding:10px 20px;margin:5px;font-size:16px;background:#007bff;color:whit
 <button onclick="revcomp()">Reverse Complement</button>
 <button onclick="translateDNA()">DNA to Protein</button>
   <button onclick="copyResult()">Copy Result</button>
+  <button onclick="findORF()">Find ORF</button>
 <div id="out">Result yahan aayega...</div>
 <script>
 function check(){
@@ -52,6 +53,21 @@ document.getElementById('out').innerHTML="<b>Protein:</b> "+protein;
   function copyResult(){
   let t = document.getElementById('out').innerText;
   navigator.clipboard.writeText(t).then(function(){ alert('Copy ho gaya!'); });
+}
+  function findORF(){
+  let dna = document.getElementById('dna').value.toUpperCase().replace(/[^ATGC]/g,'');
+  let start = dna.indexOf('ATG');
+  if(start === -1){ document.getElementById('out').innerHTML = '<b>ORF nahi mila!</b><br>ATG start codon nahi hai.'; return; }
+  let stops = ['TAA','TAG','TGA'];
+  let end = -1;
+  for(let i = start; i < dna.length; i += 3){
+    let codon = dna.substring(i, i+3);
+    if(stops.includes(codon)){ end = i; break; }
+  }
+  if(end === -1){ document.getElementById('out').innerHTML = '<b>ORF nahi mila!</b><br>Stop codon nahi hai.'; return; }
+  let orfDna = dna.substring(start, end+3);
+  let protein = translateDNA(orfDna);
+  document.getElementById('out').innerHTML = '<b>ORF Mil Gaya!</b><br><b>Position:</b> ' + (start+1) + ' se ' + (end+3) + ' tak<br><b>ORF DNA:</b> ' + orfDna + '<br><b>Protein:</b> ' + protein;
 }
 </script>
 </body>
